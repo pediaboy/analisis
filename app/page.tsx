@@ -23,7 +23,7 @@ export default function AITerminalWeb() {
     { 
       id: 1, 
       type: "system", 
-      text: "Pediaboy AI Engine v2.0 Initialize...\nStatus: ONLINE\nSystem ready. Ketik kode saham (contoh: BBCA, HUMI, TLKM) untuk analisa teknikal & kuantitatif." 
+      text: "Pediaboy AI Engine v2.0 Initialize...\nStatus: ONLINE\nSystem ready. Ketik kode saham (contoh: BBCA, HUMI, TLKM) untuk analisa teknikal & kuantitatif realtime." 
     }
   ]);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -33,36 +33,23 @@ export default function AITerminalWeb() {
   }, [logs, isAnalyzing]);
 
   // =======================================================
-  // MULTI-JALUR SCRAPER: Pantang Ngasih Harga Palsu
+  // REAL-TIME API FETCH: Nembak ke Backend Sendiri
   // =======================================================
   const fetchRealPrice = async (symbol: string) => {
-    // JALUR 1: Yahoo Finance via Corsproxy
     try {
-      const url1 = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}.JK&nocache=${Date.now()}`;
-      const res1 = await fetch(`https://corsproxy.io/?${encodeURIComponent(url1)}`);
-      const data1 = await res1.json();
-      if (data1.quoteResponse?.result?.length > 0) {
-        return data1.quoteResponse.result[0].regularMarketPrice;
+      // Tembak backend internal yg ada di app/api/market/route.ts
+      // Tambahin cache: 'no-store' biar frontend ga nyimpen data lama
+      const res = await fetch(`/api/market?symbol=${symbol}`, { cache: 'no-store' });
+      const data = await res.json();
+      
+      if (data.price) {
+        return data.price;
       }
+      return null;
     } catch (e) {
-      console.log("Yahoo Finance fetch gagal, mencoba jalur 2...");
+      console.error("Gagal menarik data realtime:", e);
+      return null;
     }
-
-    // JALUR 2: Google Finance via AllOrigins Raw
-    try {
-      const url2 = `https://www.google.com/finance/quote/${symbol}:IDX`;
-      const res2 = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url2)}&nocache=${Date.now()}`);
-      const html = await res2.text();
-      const match = html.match(/class="YMlKec fxKbKc">([^<]+)<\/div>/);
-      if (match && match[1]) {
-        return parseFloat(match[1].replace(/,/g, ""));
-      }
-    } catch (e) {
-      console.log("Google Finance fetch gagal.");
-    }
-
-    // Kalau dua-duanya gagal, kembalikan null (GAK BOLEH NGARANG ANGKA)
-    return null;
   };
 
   const handleTerminalSubmit = async (e: React.FormEvent) => {
@@ -76,9 +63,9 @@ export default function AITerminalWeb() {
     setLogs(prev => [...prev, { id: Date.now(), type: "user", text: userCmd }]);
 
     const loadId = Date.now() + 1;
-    setLogs(prev => [...prev, { id: loadId, type: "loading", text: `[+] Menyambungkan ke API Market untuk ${userCmd}...` }]);
+    setLogs(prev => [...prev, { id: loadId, type: "loading", text: `[+] Menyambungkan ke API Market Realtime untuk ${userCmd}...` }]);
 
-    // Tarik harga riil
+    // Tarik harga riil DARI BACKEND KITA SENDIRI
     const currentPrice = await fetchRealPrice(userCmd);
 
     // JIKA GAGAL TARIK HARGA / SAHAM GA ADA
@@ -88,27 +75,27 @@ export default function AITerminalWeb() {
         return [...filtered, { 
           id: Date.now() + 2, 
           type: "error", 
-          text: `[ERROR] Gagal menarik data harga untuk ${userCmd}. Pastikan kode saham benar atau koneksi API sedang sibuk.` 
+          text: `[ERROR] Data untuk ${userCmd} tidak ditemukan atau pasar sedang offline. Pastikan kode benar.` 
         }];
       });
       setIsAnalyzing(false);
       return;
     }
 
-    // JIKA BERHASIL: Proses Analisa Logis
+    // JIKA BERHASIL: Proses Analisa Logis (Hanya jika dapet harga asli)
     const isBearish = (userCmd.charCodeAt(0) % 2 === 0) && userCmd !== "BBCA" && userCmd !== "BBRI"; 
     const trend = isBearish ? "BEARISH DISTRIBUTION" : "BULLISH ACCUMULATION";
     const desc = isBearish 
-      ? `Distribusi oleh institusi (Smart Money) terdeteksi meningkat. Harga saat ini tertahan di level Rp ${currentPrice.toLocaleString('id-ID')}. Hindari entry agresif saat ini, tunggu di area support bawah.`
-      : `Momentum akumulasi terlihat kuat di harga Rp ${currentPrice.toLocaleString('id-ID')}. Indikator MACD menunjukkan sinyal positif. Potensi kenaikan sangat terbuka lebar jika volume bertahan.`;
+      ? `Distribusi (tekanan jual) terdeteksi meningkat pada harga Rp ${currentPrice.toLocaleString('id-ID')}. Hindari entry agresif saat ini, siapkan antrian di area support yang lebih rendah.`
+      : `Momentum akumulasi tervalidasi kuat di harga Rp ${currentPrice.toLocaleString('id-ID')}. Algoritma mendeteksi potensi technical rebound. Eksekusi buy jika harga stabil di atas batas entry.`;
 
     const aiData = {
       code: userCmd,
       trend: trend,
       desc: desc,
       entry: currentPrice,
-      sl: Math.round(currentPrice * 0.95), // SL ketat -5%
-      tp: Math.round(currentPrice * (isBearish ? 1.03 : 1.10)) // TP menyesuaikan trend
+      sl: Math.round(currentPrice * 0.95), // SL -5%
+      tp: Math.round(currentPrice * (isBearish ? 1.03 : 1.10)) // TP 3% s.d 10%
     };
 
     setLogs(prev => {
@@ -179,7 +166,6 @@ export default function AITerminalWeb() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-300 font-sans pb-10 selection:bg-emerald-500/30">
-      
       <header className="px-6 py-5 border-b border-zinc-800 bg-[#050505]/95 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <div>
