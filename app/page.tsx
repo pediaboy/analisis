@@ -2,114 +2,170 @@
 
 import { useState, useRef, useEffect } from "react";
 
-export default function AIAnalyzer() {
+export default function AdvancedTerminal() {
   const [input, setInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [terminalOutput, setTerminalOutput] = useState<string[]>([]);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [logs, setLogs] = useState<string[]>([
+    "System initialized. Terminal standby for market command.",
+    "Ketik kode saham (contoh: BBCA, HUMI, TLKM) lalu tekan Enter.",
+  ]);
+  const [currentTime, setCurrentTime] = useState("");
+  const terminalBottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll ke bawah tiap ada output baru di terminal
+  // Realtime clock untuk header terminal
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [terminalOutput]);
+    const updateClock = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString("id-ID") + " WIB");
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const addLine = (text: string, delay: number) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        setTerminalOutput((prev) => [...prev, text]);
-        resolve(true);
-      }, delay);
-    });
+  // Auto scroll ke baris log paling bawah biar ga ketutupan
+  useEffect(() => {
+    terminalBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [logs, isAnalyzing]);
+
+  // Fungsi kalkulasi data acak tapi konsisten berdasarkan kode saham yang diinput
+  const generateDynamicMetrics = (code: string) => {
+    const seed = code.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const rsi = (32 + (seed % 42)).toFixed(1);
+    const isBearish = seed % 2 === 0;
+    const grade = isBearish ? "AVOID / WATCHLIST" : "ACCUMULATE / BUY SETUP";
+    const support = (100 + (seed % 15) * 75);
+    const resistance = support + (seed % 8 + 3) * 65;
+    const netFlow = (seed % 5 + 1.2).toFixed(1);
+
+    return {
+      rsi,
+      grade,
+      support,
+      resistance,
+      trend: isBearish ? "Bearish Markdown Phase" : "Bullish Accumulation Structure",
+      foreignAction: isBearish ? `Net Sell Rp ${netFlow} Triliun` : `Net Buy Rp ${netFlow} Triliun`,
+    };
   };
 
-  const handleAnalyze = async (e: React.FormEvent) => {
+  const handleCommandSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input) return;
+    if (!input.trim() || isAnalyzing) return;
 
-    const stockCode = input.toUpperCase();
+    const stockCode = input.trim().toUpperCase();
     setInput("");
     setIsAnalyzing(true);
-    setTerminalOutput([`> Menginisialisasi Pediaboy AI untuk [${stockCode}]...`]);
 
-    // Simulasi proses narik data & AI berfikir (Persis kayak di video lu)
-    await addLine(`[+] Mengambil data historis ${stockCode} dari Yahoo Finance...`, 800);
-    await addLine(`[+] Sukses menarik 10 berita sentimen terbaru via Google News.`, 1000);
-    await addLine(`[~] Mengirim prompt ke AI Engine (Llama-3)...`, 1200);
-    await addLine(`[~] Menganalisa struktur Market & Momentum...`, 1500);
-    await addLine(`[OK] Analisis Selesai. Menghasilkan laporan...`, 1000);
-    await addLine("--------------------------------------------------", 500);
+    // Tambah baris perintah baru ke log
+    setLogs((prev) => [...prev, `\n> MENGANALISA DIREKTORI EMITEN: [${stockCode}]`]);
 
-    // Output Hasil Analisa AI
-    await addLine(`**Kesimpulan Arah Trend dan Momentum**`, 500);
-    await addLine(`Indeks Harga Saham Gabungan (${stockCode}) berada dalam fase momentum negatif. RSI (30.2) berada di zona oversold, dan MACD memberikan sinyal bearish dominan. Tidak disarankan untuk entry agresif.`, 1000);
-    
-    await addLine(` `, 200);
-    await addLine(`**Perspektif Katalis**`, 500);
-    await addLine(`Berita lokal menunjukkan tekanan negatif yang konsisten. Aliran dana asing mencatatkan net-sell sebesar Rp 3,2 triliun minggu ini.`, 1000);
+    const metrics = generateDynamicMetrics(stockCode);
 
-    await addLine(` `, 200);
-    await addLine(`**Evaluasi Support/Resistance dan Risk Level**`, 500);
-    await addLine(`[!] Level support utama terletak di 6.650, jika tembus berpotensi turun ke 6.500. Resistance kuat di 7.100. Grade: AVOID.`, 1000);
-    await addLine("--------------------------------------------------", 500);
-    await addLine("> Pediaboy AI Standby. Masukkan kode saham selanjutnya.", 500);
+    // Simulasi sekuensial log berjalan agar tidak instan dan kaku
+    const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+    await delay(500);
+    setLogs((prev) => [...prev, `[+] Mengubungkan ke IDX Core Data API via Yahoo Finance...`]);
+    await delay(700);
+    setLogs((prev) => [...prev, `[+] Sinkronisasi grafik volume & broker summary selesai.`]);
+    await delay(600);
+    setLogs((prev) => [...prev, `[~] Memproses osilator teknikal (RSI, MACD, Moving Averages)...`]);
+    await delay(800);
+    setLogs((prev) => [...prev, `[OK] Kompilasi data kuantitatif untuk ${stockCode} sukses.`]);
+    await delay(400);
+    setLogs((prev) => [...prev, `------------------------------------------------------------`]);
+    await delay(300);
+    setLogs((prev) => [...prev, `** STRUKTUR PASAR & MOMENTUM **`]);
+    await delay(400);
+    setLogs((prev) => [...prev, `Emiten ${stockCode} terdeteksi berada dalam kondisi "${metrics.trend}". Indikator Relative Strength Index (RSI) berada pada level ${metrics.rsi}. Status rekomendasi zona saat ini: ${metrics.grade}.`]);
+    await delay(300);
+    setLogs((prev) => [...prev, ` `]);
+    await delay(200);
+    setLogs((prev) => [...prev, `** ALIRAN DANA (INSTITUTIONAL FLOW) **`]);
+    await delay(400);
+    setLogs((prev) => [...prev, `Aktivitas market maker dominan mencatatkan akumulasi makro dengan akumulatif data ${metrics.foreignAction} dalam periode observasi pekan ini.`]);
+    await delay(300);
+    setLogs((prev) => [...prev, ` `]);
+    await delay(200);
+    setLogs((prev) => [...prev, `** AREA TEKNIKAL & PROTOKOL RISIKO **`]);
+    await delay(500);
+    setLogs((prev) => [...prev, `[!] Support Krusial: Rp ${metrics.support.toLocaleString("id-ID")} | Target Resistance: Rp ${metrics.resistance.toLocaleString("id-ID")}. Eksekusi disarankan hanya jika validasi candlestick terkonfirmasi.`]);
+    await delay(400);
+    setLogs((prev) => [...prev, `------------------------------------------------------------`]);
+    await delay(200);
+    setLogs((prev) => [...prev, `> Terminal Siap. Silahkan masukkan perintah saham berikutnya.`]);
 
     setIsAnalyzing(false);
   };
 
+  // Helper styling baris teks biar ga bosenin
+  const renderLineClass = (line: string) => {
+    if (line.startsWith(">")) return "text-zinc-100 font-semibold";
+    if (line.startsWith("[OK]")) return "text-emerald-400";
+    if (line.startsWith("[!]")) return "text-amber-400 font-medium";
+    if (line.startsWith("----------------")) return "text-zinc-800";
+    if (line.startsWith("**")) return "text-white font-bold tracking-wider mt-3 block text-xs";
+    return "text-zinc-400";
+  };
+
   return (
-    <div className="min-h-screen bg-[#050505] text-[#00ff00] font-mono p-4 md:p-10 selection:bg-[#00ff00] selection:text-black">
+    <div className="min-h-screen bg-[#070709] text-zinc-300 font-sans p-4 md:p-8 flex flex-col justify-between">
       
-      {/* HEADER TERMINAL */}
-      <div className="max-w-4xl mx-auto mb-6 border-b border-[#00ff00]/30 pb-4 flex justify-between items-end">
+      {/* HEADER BAR MODEREN */}
+      <div className="max-w-3xl w-full mx-auto mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-zinc-800 pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-widest text-white">ChartPilot AI Web <span className="text-[#00ff00] text-sm animate-pulse">v1.0</span></h1>
-          <p className="text-xs text-gray-400 mt-1 uppercase">Professional Stock Chart & Trade Setup Analyzer</p>
+          <h1 className="text-white font-bold text-sm tracking-tight">
+            Thirafi Thariq Al Idris <span className="text-zinc-600 font-normal ml-1 text-xs">/ ChartPilot Analyzer</span>
+          </h1>
+          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">Quantitative Engine Core v2.0</p>
         </div>
-        <div className="text-right hidden md:block">
-          <p className="text-[10px] text-gray-500">ENGINE: OPENROUTER (LLAMA 3)</p>
-          <p className="text-[10px] text-gray-500">STATUS: <span className="text-[#00ff00]">ONLINE</span></p>
+        <div className="flex items-center gap-3 text-[11px] font-mono">
+          <span className="text-zinc-600">SYS_STATUS:</span>
+          <span className="text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">LIVE</span>
+          <span className="text-zinc-400 font-medium ml-2">{currentTime || "00:00:00 WIB"}</span>
         </div>
       </div>
 
-      {/* KOTAK TERMINAL */}
-      <div className="max-w-4xl mx-auto bg-black border border-[#00ff00]/20 rounded-lg p-5 h-[60vh] overflow-y-auto shadow-[0_0_20px_rgba(0,255,0,0.05)] relative">
-        <div className="text-xs text-gray-500 mb-4 pb-4 border-b border-gray-800">
-          <p>Welcome to Pediaboy AI Analyzer Terminal.</p>
-          <p>Ketik kode saham (misal: BBCA, IHSG, TLKM) lalu tekan Enter.</p>
-        </div>
-
-        {/* Output Text Berjalan */}
-        <div className="space-y-2 text-sm leading-relaxed">
-          {terminalOutput.map((line, idx) => (
-            <p key={idx} className={line.startsWith('**') ? "text-white font-bold mt-4" : "text-[#00ff00]/90"}>
+      {/* VIEWPORT TERMINAL UTAMA */}
+      <div className="max-w-3xl w-full mx-auto flex-1 bg-[#0b0b0d] border border-zinc-800/80 rounded-2xl p-5 md:p-6 h-[65vh] overflow-y-auto shadow-2xl font-mono text-xs leading-relaxed">
+        <div className="space-y-1.5 whitespace-pre-wrap">
+          {logs.map((line, idx) => (
+            <div key={idx} className={renderLineClass(line)}>
               {line}
-            </p>
+            </div>
           ))}
-          <div ref={bottomRef} />
+          
+          {/* Efek status kedip kalau lagi mikir */}
+          {isAnalyzing && (
+            <div className="text-blue-400 animate-pulse mt-2 flex items-center gap-2">
+              <span>⚡</span> <span>Sedangkan mengkalkulasi matriks data algoritma...</span>
+            </div>
+          )}
+          <div ref={terminalBottomRef} />
         </div>
       </div>
 
-      {/* INPUT COMMAND */}
-      <div className="max-w-4xl mx-auto mt-4">
-        <form onSubmit={handleAnalyze} className="flex gap-3">
-          <div className="flex-1 flex items-center bg-black border border-[#00ff00]/40 rounded px-4 py-3 focus-within:border-[#00ff00] focus-within:shadow-[0_0_15px_rgba(0,255,0,0.2)] transition-all">
-            <span className="text-[#00ff00] mr-3 font-bold">{">"}</span>
+      {/* FIELD ACTION INPUT BAR */}
+      <div className="max-w-3xl w-full mx-auto mt-4">
+        <form onSubmit={handleCommandSubmit} className="flex gap-2">
+          <div className="flex-1 flex items-center bg-[#0b0b0d] border border-zinc-800 rounded-xl px-4 py-3 focus-within:border-zinc-700 focus-within:ring-1 focus-within:ring-zinc-700 transition-all shadow-lg">
+            <span className="text-zinc-600 text-xs font-bold mr-2 select-none">$</span>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isAnalyzing}
-              placeholder="Masukkan kode saham (ex: BBRI)..."
-              className="bg-transparent border-none outline-none text-white w-full uppercase placeholder-gray-700 disabled:opacity-50"
+              placeholder="INPUT EMITEN CODE (CONTOH: BBRI, BBCA, HUMI)..."
+              className="bg-transparent border-none outline-none text-white w-full uppercase placeholder-zinc-600 text-xs tracking-wider disabled:opacity-40"
               autoFocus
             />
           </div>
-          <button 
-            type="submit" 
-            disabled={isAnalyzing || !input}
-            className="bg-[#00ff00]/10 border border-[#00ff00]/50 text-[#00ff00] px-6 py-3 rounded font-bold hover:bg-[#00ff00] hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          <button
+            type="submit"
+            disabled={isAnalyzing || !input.trim()}
+            className="bg-zinc-100 text-black font-bold text-xs px-5 py-3 rounded-xl hover:bg-zinc-200 transition-all disabled:opacity-30 disabled:bg-zinc-800 disabled:text-zinc-500"
           >
-            {isAnalyzing ? "ANALYZING..." : "ANALYZE"}
+            EXECUTE
           </button>
         </form>
       </div>
