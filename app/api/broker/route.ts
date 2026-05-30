@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const res = await fetch(
-    "https://api.indexalpha.id/stocks/broker-summary?symbol=BBCA",
+    "https://api.indexalpha.id/...", // URL yang sekarang lu pakai
     {
       headers: {
         Authorization: `Bearer ${process.env.INDEXALPHA_API_KEY}`,
       },
-      cache: "no-store",
     }
   );
 
