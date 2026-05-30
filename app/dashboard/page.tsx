@@ -9,11 +9,11 @@ export default function Dashboard() {
       <div className="grid gap-4 mt-6">
 
         <a
-          href="/vip/bandar"
-          className="bg-[#0B1324] p-5 rounded-2xl"
-        >
-          🏦 Bandarmologi
-        </a>
+  href="/vip/bandar"
+  className="bg-[#0B1324] p-5 rounded-2xl"
+>
+  🏦 Bandarmologi IDX
+</a>
 
         <a
           href="/vip/news"
