@@ -71,7 +71,7 @@ export default function Home() {
               to-blue-600
             "
           >
-            🔍 Cek Saham Sekarang
+            🔍 Cek Saham
           </button>
 
         </div>
