@@ -1,40 +1,61 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import LoadingScreen from './components/LoadingScreen';
-import ParticleBackground from './components/ParticleBackground';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+"use client";
 
-export default function App() {
-  const [loading, setLoading] = useState(true);
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function VIP() {
+
+  const [token, setToken] = useState("");
+  const router = useRouter();
+
+  const login = () => {
+
+    if (token === "RITEL2026") {
+
+      localStorage.setItem("vip", "true");
+
+      router.push("/dashboard");
+
+    } else {
+
+      alert("Token Salah");
+
+    }
+  };
 
   return (
-    <div className="relative noise-overlay" style={{ background: '#050510' }}>
-      <AnimatePresence mode="wait">
-        {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
-      </AnimatePresence>
+    <main className="max-w-md mx-auto min-h-screen p-4">
 
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <ParticleBackground />
-          <Navbar />
-          <main className="relative z-10">
-            <Hero />
-            <About />
-            <Services />
-            <Contact />
-          </main>
-          <Footer />
-        </motion.div>
-      )}
-    </div>
+      <h1 className="text-2xl font-bold text-blue-400 mt-10">
+        Login VIP
+      </h1>
+
+      <p className="text-slate-400 mt-2">
+        Masukkan token VIP
+      </p>
+
+      <input
+        value={token}
+        onChange={(e) => setToken(e.target.value)}
+        placeholder="Token VIP"
+        className="w-full mt-5 p-3 rounded-xl bg-[#111827]"
+      />
+
+      <button
+        onClick={login}
+        className="w-full mt-4 p-3 rounded-xl bg-blue-600"
+      >
+        Masuk Dashboard
+      </button>
+
+      <a
+        href="https://wa.me/6282218723401?text=Saya%20ingin%20join%20VIP"
+        target="_blank"
+        className="block text-center mt-4 text-blue-400"
+      >
+        Belum punya token?
+      </a>
+
+    </main>
   );
 }
