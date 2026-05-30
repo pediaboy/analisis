@@ -6,8 +6,14 @@ export default async function AnalisaPage({
   const { kode } = await params;
 
   return (
-    <div>
-      Analisa {kode}
-    </div>
+    <main className="min-h-screen bg-black text-white p-6">
+      <h1 className="text-3xl font-bold text-cyan-400">
+        {kode}
+      </h1>
+
+      <p className="mt-4">
+        Halaman Analisa Saham
+      </p>
+    </main>
   );
 }
