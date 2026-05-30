@@ -10,15 +10,14 @@ export async function GET(req: Request) {
     searchParams.get("type") || "buy";
 
   const res = await fetch(
-    `https://api.datasectors.com/api/stocks/investors/trade-activity?slug=${kode}&limit=20&skip=0&trade_type=${tradeType}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.DATASECTORS_API_KEY}`,
-      },
-      cache: "no-store",
-    }
-  );
-
+  `https://api.datasectors.com/api/stocks/investors/trade-activity?slug=${kode}&time_range=1d&limit=20&skip=0&trade_type=${tradeType}`,
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.DATASECTORS_API_KEY}`,
+    },
+    cache: "no-store",
+  }
+);
   const data = await res.json();
 
   return NextResponse.json(data);
