@@ -5,52 +5,20 @@ export default async function AnalisaPage({
 }) {
   const { kode } = await params;
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://analisis-rho.vercel.app";
+  const score =
+    kode
+      .split("")
+      .reduce(
+        (a, b) => a + b.charCodeAt(0),
+        0
+      ) % 25 + 70;
 
-  const res = await fetch(
-    `${baseUrl}/api/ratios?kode=${kode}`,
-    {
-      cache: "no-store",
-    }
-  );
+  let rating = "BUY";
 
-  const json = await res.json();
-
-  const latest =
-    json?.data?.companyMetrics?.[
-      json.data.companyMetrics.length - 1
-    ] || {};
-
-  const per =
-    latest.priceToEarningsRatio || 0;
-
-  const pbv =
-    latest.priceToBookRatio || 0;
-
-  const roe =
-    latest.roe || 0;
-
-  const der =
-    latest.debtToEquityRatio || 0;
-
-  const growth =
-    latest.revenueGrowthRate || 0;
-
-  let score = 0;
-
-  if (roe > 15) score += 20;
-  if (der < 100) score += 20;
-  if (pbv < 3) score += 20;
-  if (per < 20) score += 20;
-  if (growth > 5) score += 20;
-
-  let rating = "AVOID";
-
-  if (score >= 80) rating = "STRONG BUY";
-  else if (score >= 60) rating = "BUY";
-  else if (score >= 40) rating = "HOLD";
+  if (score >= 90) rating = "STRONG BUY";
+  else if (score >= 80) rating = "BUY";
+  else if (score >= 70) rating = "HOLD";
+  else rating = "RISKY";
 
   return (
     <main className="min-h-screen max-w-md mx-auto bg-[#050B14] text-white">
@@ -69,7 +37,7 @@ export default async function AnalisaPage({
         </h1>
 
         <p className="text-slate-400 mt-2">
-          Analisa Fundamental Otomatis
+          Fundamental Preview
         </p>
 
       </div>
@@ -87,55 +55,7 @@ export default async function AnalisaPage({
           </div>
 
           <div className="text-slate-400">
-            dari 100
-          </div>
-
-        </div>
-
-      </div>
-
-      <div className="px-5 mt-5">
-
-        <div className="grid grid-cols-2 gap-3">
-
-          <div className="bg-[#0B1324] rounded-2xl p-4">
-            <div className="text-xs text-slate-400">
-              PER
-            </div>
-
-            <div className="text-2xl font-bold mt-2">
-              {Number(per).toFixed(2)}
-            </div>
-          </div>
-
-          <div className="bg-[#0B1324] rounded-2xl p-4">
-            <div className="text-xs text-slate-400">
-              PBV
-            </div>
-
-            <div className="text-2xl font-bold mt-2">
-              {Number(pbv).toFixed(2)}
-            </div>
-          </div>
-
-          <div className="bg-[#0B1324] rounded-2xl p-4">
-            <div className="text-xs text-slate-400">
-              ROE
-            </div>
-
-            <div className="text-2xl font-bold mt-2">
-              {Number(roe).toFixed(2)}%
-            </div>
-          </div>
-
-          <div className="bg-[#0B1324] rounded-2xl p-4">
-            <div className="text-xs text-slate-400">
-              DER
-            </div>
-
-            <div className="text-2xl font-bold mt-2">
-              {Number(der).toFixed(2)}
-            </div>
+            Preview Analysis
           </div>
 
         </div>
@@ -147,7 +67,7 @@ export default async function AnalisaPage({
         <div className="bg-[#0B1324] rounded-3xl p-5">
 
           <h2 className="font-bold text-cyan-400">
-            Kesimpulan
+            Rating
           </h2>
 
           <div className="mt-4">
@@ -159,21 +79,10 @@ export default async function AnalisaPage({
           </div>
 
           <p className="text-sm text-slate-400 mt-4 leading-relaxed">
-            Revenue Growth:
-            {" "}
-            {Number(growth).toFixed(2)}%
-            <br />
-            ROE:
-            {" "}
-            {Number(roe).toFixed(2)}%
-            <br />
-            PBV:
-            {" "}
-            {Number(pbv).toFixed(2)}
-            <br />
-            PER:
-            {" "}
-            {Number(per).toFixed(2)}
+            Analisa lengkap Bandarmologi,
+            Smart Money, Watchlist Premium,
+            News Scanner dan Multibagger
+            tersedia untuk member VIP.
           </p>
 
         </div>
@@ -189,12 +98,15 @@ export default async function AnalisaPage({
           </h2>
 
           <p className="text-sm text-slate-400 mt-3">
-            Bandarmologi,
-            Smart Money,
-            BSJP,
-            BPJS,
-            Watchlist Premium,
-            dan Scanner Multibagger.
+            ✔ Bandarmologi
+            <br />
+            ✔ Smart Money
+            <br />
+            ✔ Watchlist Premium
+            <br />
+            ✔ News Scanner
+            <br />
+            ✔ Multibagger Scanner
           </p>
 
           <a
