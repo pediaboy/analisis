@@ -1,33 +1,65 @@
-export default function Dashboard() {
+export default async function BandarPage() {
+  const res = await fetch(
+    "https://analisis-rho.vercel.app/api/broker",
+    {
+      cache: "no-store",
+    }
+  );
+
+  const json = await res.json();
+
+  const brokers = json?.data || [];
+
   return (
-    <main className="min-h-screen bg-[#050B14] text-white max-w-md mx-auto p-5">
+    <main className="min-h-screen bg-[#050B14] text-white max-w-md mx-auto">
 
-      <h1 className="text-3xl font-bold text-cyan-400">
-        VIP Dashboard
-      </h1>
-
-      <div className="grid gap-4 mt-6">
+      <div className="p-5">
 
         <a
-  href="/vip/bandar"
-  className="bg-[#0B1324] p-5 rounded-2xl"
->
-  🏦 Bandarmologi IDX
-</a>
-
-        <a
-          href="/vip/news"
-          className="bg-[#0B1324] p-5 rounded-2xl"
+          href="/dashboard"
+          className="text-cyan-400 text-sm"
         >
-          📰 News Scanner
+          ← Dashboard
         </a>
 
-        <a
-          href="/vip/watchlist"
-          className="bg-[#0B1324] p-5 rounded-2xl"
-        >
-          🔥 Watchlist Premium
-        </a>
+        <h1 className="text-3xl font-bold text-cyan-400 mt-4">
+          Bandarmologi IDX
+        </h1>
+
+      </div>
+
+      <div className="px-5 pb-10">
+
+        <div className="bg-[#0B1324] rounded-3xl p-5">
+
+          <h2 className="font-bold text-cyan-400">
+            Broker Summary
+          </h2>
+
+          <div className="mt-4 space-y-3">
+
+            {brokers.map((broker: any, index: number) => (
+              <div
+                key={index}
+                className="flex justify-between border-b border-white/5 pb-2"
+              >
+                <span>
+                  {broker.code}
+                </span>
+
+                <span>
+                  Buy:
+                  {" "}
+                  {Number(
+                    broker.buy_value || 0
+                  ).toLocaleString()}
+                </span>
+              </div>
+            ))}
+
+          </div>
+
+        </div>
 
       </div>
 
