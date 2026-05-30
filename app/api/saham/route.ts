@@ -1,40 +1,20 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import LoadingScreen from './components/LoadingScreen';
-import ParticleBackground from './components/ParticleBackground';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { NextResponse } from "next/server";
 
-export default function App() {
-  const [loading, setLoading] = useState(true);
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
 
-  return (
-    <div className="relative noise-overlay" style={{ background: '#050510' }}>
-      <AnimatePresence mode="wait">
-        {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
-      </AnimatePresence>
+  const kode = searchParams.get("kode");
 
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <ParticleBackground />
-          <Navbar />
-          <main className="relative z-10">
-            <Hero />
-            <About />
-            <Services />
-            <Contact />
-          </main>
-          <Footer />
-        </motion.div>
-      )}
-    </div>
+  const res = await fetch(
+    `ds_live_73YIBWb3U-lFORtGdYhEdMvCWxhweJvf`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.DATASECTORS_API_KEY}`,
+      },
+    }
   );
+
+  const data = await res.json();
+
+  return NextResponse.json(data);
 }
