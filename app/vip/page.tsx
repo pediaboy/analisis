@@ -6,140 +6,144 @@ import { useRouter } from "next/navigation";
 export default function VipPage() {
   const [token, setToken] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const TOKENS = ["RCVIP001", "RCVIP002", "RCVIP003"];
 
   const handleLogin = () => {
-    if (TOKENS.includes(token.trim())) {
-      localStorage.setItem("vip", "true");
-      router.push("/dashboard");
-    } else {
-      setError(true);
-      setTimeout(() => setError(false), 2500);
-    }
-  };
-
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleLogin();
+    setLoading(true);
+    setTimeout(() => {
+      if (TOKENS.includes(token.trim())) {
+        localStorage.setItem("vip", "true");
+        router.push("/dashboard");
+      } else {
+        setError(true);
+        setLoading(false);
+        setTimeout(() => setError(false), 3000);
+      }
+    }, 600);
   };
 
   return (
-    <main
-      className="min-h-screen text-white max-w-md mx-auto"
-      style={{ background: "var(--bg-base)" }}
-    >
-      {/* HEADER */}
-      <div className="px-5 pt-10 pb-5" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-        <a href="/" className="inline-flex items-center gap-1.5 text-xs font-medium mb-6 transition-opacity hover:opacity-70" style={{ color: "var(--text-muted)" }}>
-          ← Kembali
-        </a>
-        <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: "var(--text-muted)" }}>
-          Member Area
+    <main className="min-h-screen text-white max-w-md mx-auto px-5 pt-12 pb-12">
+
+      {/* NAV */}
+      <div className="flex items-center justify-between mb-12">
+        <a href="/" className="text-xs font-semibold" style={{ color: "var(--muted-2)" }}>← Kembali</a>
+        <span className="pill">MEMBER AREA</span>
+      </div>
+
+      {/* HERO */}
+      <div className="mb-10 text-center">
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6"
+          style={{
+            background: "linear-gradient(135deg, rgba(0,212,255,0.15), rgba(168,85,247,0.15))",
+            border: "1px solid rgba(0,212,255,0.2)",
+          }}
+        >
+          🔐
+        </div>
+        <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "var(--muted)" }}>
+          Login
         </p>
         <h1
-          className="text-2xl font-bold"
-          style={{ color: "var(--neon-cyan)", textShadow: "0 0 24px rgba(0,212,255,0.35)" }}
+          className="text-4xl font-black"
+          style={{
+            background: "linear-gradient(135deg, #ffffff 0%, var(--cyan) 60%, var(--purple) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
         >
-          VIP Login
+          VIP Dashboard
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
+        <p className="text-sm mt-2" style={{ color: "var(--muted-2)" }}>
           Masukkan token membership untuk akses penuh
         </p>
       </div>
 
-      <div className="px-5 py-6 space-y-4 pb-10">
+      <div className="space-y-4">
 
-        {/* LOGIN FORM */}
+        {/* FORM */}
         <div
           className="rounded-2xl p-5"
           style={{
-            background: "var(--bg-card)",
-            border: `1px solid ${error ? "rgba(239,68,68,0.4)" : "var(--border-active)"}`,
+            background: "rgba(255,255,255,0.04)",
+            border: `1px solid ${error ? "rgba(239,68,68,0.4)" : "rgba(0,212,255,0.2)"}`,
+            backdropFilter: "blur(12px)",
             boxShadow: error
-              ? "0 0 24px rgba(239,68,68,0.08)"
-              : "0 0 40px rgba(0,212,255,0.06)",
-            transition: "border-color 0.3s, box-shadow 0.3s",
+              ? "0 0 30px rgba(239,68,68,0.06)"
+              : "0 0 40px rgba(0,212,255,0.05)",
+            transition: "all 0.3s",
           }}
         >
-          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--text-muted)" }}>
-            🔐 Token VIP
+          <p className="text-xs font-bold tracking-widest uppercase mb-4" style={{ color: "var(--muted)" }}>
+            Token VIP
           </p>
 
-          <input
-            value={token}
-            onChange={(e) => { setToken(e.target.value); setError(false); }}
-            onKeyDown={handleKey}
-            placeholder="Masukkan Token VIP"
-            className="w-full rounded-xl px-4 py-4 text-sm font-medium outline-none placeholder:opacity-40 transition-all"
+          <div
+            className="flex items-center gap-3 rounded-xl px-4 py-3.5 mb-3"
             style={{
-              background: "#03080f",
-              border: `1px solid ${error ? "rgba(239,68,68,0.4)" : "var(--border-subtle)"}`,
-              color: "white",
-              letterSpacing: "0.08em",
+              background: "rgba(0,0,0,0.3)",
+              border: `1px solid ${error ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.06)"}`,
+              transition: "border-color 0.2s",
             }}
-            onFocus={(e) => !error && (e.currentTarget.style.borderColor = "var(--neon-cyan)")}
-            onBlur={(e) => !error && (e.currentTarget.style.borderColor = "var(--border-subtle)")}
-          />
+          >
+            <span style={{ color: "var(--muted)" }}>🔑</span>
+            <input
+              value={token}
+              onChange={(e) => { setToken(e.target.value); setError(false); }}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              placeholder="Masukkan Token VIP"
+              className="flex-1 bg-transparent outline-none text-sm font-medium placeholder:opacity-30"
+              style={{ color: "white", letterSpacing: "0.06em" }}
+            />
+          </div>
 
           {error && (
-            <p className="text-xs mt-2" style={{ color: "#ef4444" }}>
-              Token tidak valid. Hubungi admin untuk token aktif.
+            <p className="text-xs mb-3" style={{ color: "#ef4444" }}>
+              ⚠️ Token tidak valid. Hubungi admin untuk token aktif.
             </p>
           )}
 
           <button
             onClick={handleLogin}
-            className="w-full mt-4 py-4 rounded-xl font-bold text-sm tracking-wide transition-all"
-            style={{
-              background: "linear-gradient(135deg, #00d4ff 0%, #2563eb 100%)",
-              color: "#020810",
-              boxShadow: "0 0 20px rgba(0,212,255,0.25)",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 0 40px rgba(0,212,255,0.45)")}
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 0 20px rgba(0,212,255,0.25)")}
+            disabled={loading || !token}
+            className="btn-primary"
+            style={{ opacity: !token ? 0.5 : 1 }}
           >
-            Masuk ke Dashboard →
+            {loading ? "Memverifikasi..." : "Masuk ke Dashboard →"}
           </button>
         </div>
 
-        {/* BELUM PUNYA TOKEN */}
-        <div
-          className="rounded-2xl p-5"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
+        {/* BELUM TOKEN */}
+        <div className="glass p-5">
           <p className="font-bold text-white mb-1">Belum punya token?</p>
-          <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
-            Hubungi admin untuk aktivasi membership. Token aktif langsung setelah pembayaran.
+          <p className="text-xs mb-4" style={{ color: "var(--muted-2)" }}>
+            Hubungi admin untuk aktivasi. Token aktif langsung setelah pembayaran.
           </p>
           <a
             href="https://wa.me/6282218723401?text=Halo%20Admin,%20saya%20ingin%20bergabung%20VIP%20Ritel%20Community."
             target="_blank"
             rel="noreferrer"
-            className="block text-center py-3.5 rounded-xl font-bold text-sm tracking-wide"
+            className="btn-primary mb-2"
             style={{
-              background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
-              color: "white",
-              boxShadow: "0 0 20px rgba(34,197,94,0.2)",
+              background: "linear-gradient(135deg, #22c55e 0%, #15803d 100%)",
+              boxShadow: "0 0 30px rgba(34,197,94,0.2)",
             }}
           >
             WhatsApp Admin →
           </a>
-          <a
-            href="/paket"
-            className="block text-center py-3 mt-2 rounded-xl font-medium text-sm"
-            style={{ color: "var(--neon-cyan)", border: "1px solid var(--border-active)" }}
-          >
+          <a href="/paket" className="btn-outline">
             Lihat Harga Paket
           </a>
         </div>
 
-        {/* FITUR PREVIEW */}
-        <div
-          className="rounded-2xl p-5"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
-          <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "var(--text-muted)" }}>
+        {/* PREVIEW FITUR */}
+        <div className="glass p-5">
+          <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "var(--muted)" }}>
             Yang Kamu Dapat
           </p>
           <div className="space-y-2">
@@ -152,11 +156,11 @@ export default function VipPage() {
             ].map((f) => (
               <div
                 key={f}
-                className="text-xs py-2 px-3 rounded-lg"
+                className="text-xs py-2.5 px-3 rounded-xl"
                 style={{
-                  background: "rgba(0,212,255,0.04)",
-                  color: "#94a3b8",
-                  border: "1px solid var(--border-subtle)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: "var(--muted-2)",
+                  border: "1px solid rgba(255,255,255,0.05)",
                 }}
               >
                 {f}
@@ -166,16 +170,15 @@ export default function VipPage() {
         </div>
 
         {/* FOOTER */}
-        <div
-          className="rounded-xl px-5 py-4"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
-          <div className="text-xs font-semibold tracking-wide" style={{ color: "var(--neon-cyan)" }}>
+        <div className="divider" />
+        <div className="text-center pt-2">
+          <p className="text-xs font-bold tracking-widest uppercase mb-1" style={{ color: "var(--muted)" }}>
             Creator & Developer
-          </div>
-          <div className="text-sm font-medium text-white mt-1">THIRAFI THARIQ AL IDRIS</div>
-          <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>@elthoriqqqq_</div>
+          </p>
+          <p className="font-bold text-white">THIRAFI THARIQ AL IDRIS</p>
+          <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>@elthoriqqqq_</p>
         </div>
+
       </div>
     </main>
   );
