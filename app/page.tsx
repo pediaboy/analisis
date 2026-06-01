@@ -12,171 +12,173 @@ export default function Home() {
     router.push(`/analisa/${kode.toUpperCase()}`);
   };
 
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleAnalisa();
-  };
-
   return (
-    <main
-      className="min-h-screen text-white max-w-md mx-auto flex flex-col"
-      style={{ background: "var(--bg-base)" }}
-    >
-      {/* TOP BAR */}
-      <div
-        className="px-5 pt-10 pb-6"
-        style={{ borderBottom: "1px solid var(--border-subtle)" }}
-      >
-        <div className="flex items-center gap-2 mb-1">
-          <div
-            className="w-2 h-2 rounded-full animate-pulse"
-            style={{ background: "var(--neon-cyan)", boxShadow: "0 0 6px var(--neon-cyan)" }}
-          />
-          <span className="text-xs font-medium tracking-widest uppercase" style={{ color: "var(--text-muted)" }}>
-            Live
+    <main className="min-h-screen text-white max-w-md mx-auto px-5 pt-12 pb-12">
+
+      {/* HEADER NAV */}
+      <div className="flex items-center justify-between mb-14">
+        <div>
+          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "var(--cyan)" }}>
+            RITEL COMMUNITY
           </span>
+          <div className="w-6 h-0.5 mt-1 rounded-full" style={{ background: "linear-gradient(90deg, var(--cyan), var(--purple))" }} />
         </div>
-        <h1
-          className="text-2xl font-bold tracking-tight"
-          style={{ color: "var(--neon-cyan)", textShadow: "0 0 24px rgba(0,212,255,0.35)" }}
+        <a
+          href="/vip"
+          className="text-xs font-semibold px-3 py-1.5 rounded-full"
+          style={{ border: "1px solid rgba(255,255,255,0.1)", color: "var(--muted-2)" }}
         >
-          RITEL COMMUNITY.ID
+          Login VIP →
+        </a>
+      </div>
+
+      {/* HERO */}
+      <div className="text-center mb-10">
+        <div className="pill mx-auto w-fit mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+          IDX FUNDAMENTAL SCANNER
+        </div>
+
+        <h1 className="text-5xl font-black leading-tight tracking-tight mb-4">
+          Analisa
+          <br />
+          <span className="gradient-text">Saham Indonesia</span>
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-          Fundamental · Bandarmologi · Multibagger
+
+        <p className="text-sm leading-relaxed" style={{ color: "var(--muted-2)" }}>
+          Cek fundamental saham IDX — Bandarmologi,
+          <br />
+          Smart Money & Multibagger dalam hitungan detik.
         </p>
       </div>
 
-      {/* HERO SEARCH */}
-      <div className="px-5 pt-8">
+      {/* SEARCH */}
+      <div className="glass-glow p-5 mb-4">
         <div
-          className="rounded-2xl p-6"
-          style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-active)",
-            boxShadow: "0 0 40px rgba(0,212,255,0.06)",
-          }}
+          className="flex items-center gap-3 rounded-xl px-4 py-3.5 mb-3"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
         >
-          <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: "var(--neon-cyan)" }}>
-            Scanner
-          </p>
-          <h2 className="text-2xl font-bold leading-snug text-white mb-1">
-            Analisa Saham
-          </h2>
-          <p className="text-sm mb-5" style={{ color: "var(--text-muted)" }}>
-            IDX · Real-time fundamental analysis
-          </p>
-
-          <div className="relative">
-            <input
-              value={kode}
-              onChange={(e) => setKode(e.target.value.toUpperCase())}
-              onKeyDown={handleKey}
-              placeholder="Ketik kode saham, mis. BBCA"
-              maxLength={6}
-              className="w-full rounded-xl px-4 py-4 text-sm font-medium outline-none placeholder:opacity-40 transition-all"
-              style={{
-                background: "#03080f",
-                border: "1px solid var(--border-subtle)",
-                color: "white",
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--neon-cyan)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-subtle)")}
-            />
-          </div>
-
-          <button
-            onClick={handleAnalisa}
-            className="w-full mt-3 py-4 rounded-xl font-bold text-sm tracking-wide transition-all"
-            style={{
-              background: "linear-gradient(135deg, #00d4ff 0%, #2563eb 100%)",
-              color: "#020810",
-              boxShadow: "0 0 24px rgba(0,212,255,0.25)",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 0 40px rgba(0,212,255,0.45)")}
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 0 24px rgba(0,212,255,0.25)")}
-          >
-            Cek Saham →
-          </button>
+          <span style={{ color: "var(--muted)" }}>🔍</span>
+          <input
+            value={kode}
+            onChange={(e) => setKode(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === "Enter" && handleAnalisa()}
+            placeholder="Ketik kode saham, mis. BBCA"
+            maxLength={6}
+            className="flex-1 bg-transparent outline-none text-sm font-medium placeholder:opacity-30"
+            style={{ color: "white" }}
+          />
+          {kode && (
+            <span className="text-xs font-bold" style={{ color: "var(--cyan)" }}>
+              {kode}
+            </span>
+          )}
         </div>
+
+        <button
+          onClick={handleAnalisa}
+          className="btn-primary"
+        >
+          Cek Saham Sekarang →
+        </button>
       </div>
 
+      {/* STATS ROW */}
+      <div className="grid grid-cols-3 gap-2 mb-8">
+        {[
+          { val: "500+", label: "Emiten IDX" },
+          { val: "Real‑time", label: "Data Update" },
+          { val: "Gratis", label: "Preview" },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="text-center py-3 px-2 rounded-xl"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+          >
+            <div className="text-sm font-bold" style={{ color: "var(--cyan)" }}>{s.val}</div>
+            <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* DIVIDER */}
+      <div className="divider mb-6" />
+
       {/* MENU */}
-      <div className="px-5 mt-5 space-y-3">
+      <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "var(--muted)" }}>
+        Fitur & Layanan
+      </p>
+      <div className="space-y-2.5 mb-8">
         {[
           {
             href: "/panduan",
             icon: "📚",
             label: "Panduan Trading",
             sub: "Dari dasar hingga analisa fundamental & teknikal",
+            badge: null,
           },
           {
             href: "/paket",
             icon: "💎",
             label: "Paket VIP",
             sub: "Bandarmologi, Multibagger, dan fitur premium",
+            badge: "HOT",
           },
           {
             href: "/vip",
             icon: "🔐",
             label: "Login VIP",
             sub: "Masuk ke dashboard member eksklusif",
+            badge: null,
           },
         ].map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className="flex items-center gap-4 rounded-xl px-5 py-4 group transition-all"
-            style={{
-              background: "var(--bg-card)",
-              border: "1px solid var(--border-subtle)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-active)";
-              e.currentTarget.style.background = "var(--bg-card-2)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border-subtle)";
-              e.currentTarget.style.background = "var(--bg-card)";
-            }}
+            className="glass flex items-center gap-4 px-4 py-4 group"
+            style={{ transition: "border-color 0.2s" }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(0,212,255,0.2)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
           >
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-              style={{ background: "rgba(0,212,255,0.08)" }}
+              style={{ background: "rgba(255,255,255,0.05)" }}
             >
               {item.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-sm text-white">{item.label}</div>
-              <div className="text-xs mt-0.5 truncate" style={{ color: "var(--text-muted)" }}>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm text-white">{item.label}</span>
+                {item.badge && (
+                  <span
+                    className="text-xs font-bold px-1.5 py-0.5 rounded"
+                    style={{ background: "rgba(168,85,247,0.2)", color: "var(--purple)", fontSize: "9px" }}
+                  >
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>
                 {item.sub}
               </div>
             </div>
-            <span style={{ color: "var(--text-muted)" }} className="text-sm">→</span>
+            <span className="text-sm" style={{ color: "var(--muted)" }}>›</span>
           </a>
         ))}
       </div>
 
+      {/* DIVIDER */}
+      <div className="divider mb-6" />
+
       {/* FOOTER */}
-      <div className="px-5 mt-6 pb-10">
-        <div
-          className="rounded-xl px-5 py-4 flex items-center justify-between"
-          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
-        >
-          <div>
-            <div className="text-xs font-semibold tracking-wide" style={{ color: "var(--neon-cyan)" }}>
-              Creator & Developer
-            </div>
-            <div className="text-sm font-medium text-white mt-1">THIRAFI THARIQ AL IDRIS</div>
-            <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>@elthoriqqqq_</div>
-          </div>
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
-            style={{ background: "rgba(0,212,255,0.08)" }}
-          >
-            📊
-          </div>
-        </div>
+      <div className="text-center">
+        <p className="text-xs font-bold tracking-widest uppercase mb-1" style={{ color: "var(--muted)" }}>
+          Creator & Developer
+        </p>
+        <p className="font-bold text-white">THIRAFI THARIQ AL IDRIS</p>
+        <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Instagram: @elthoriqqqq_</p>
       </div>
+
     </main>
   );
 }
