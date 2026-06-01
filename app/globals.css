@@ -1,10 +1,29 @@
 @import "tailwindcss";
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background: #050b14;
-  color: white;
-  font-family: sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  box-sizing: border-box;
 }
+
+:root {
+  --bg-base: #020810;
+  --bg-card: #060f1e;
+  --bg-card-2: #091220;
+  --neon-cyan: #00d4ff;
+  --neon-blue: #3b82f6;
+  --border-subtle: rgba(0, 212, 255, 0.07);
+  --border-active: rgba(0, 212, 255, 0.22);
+  --text-muted: #475b73;
+}
+
+html, body {
+  background: var(--bg-base);
+  color: #cbd5e1;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 4px; }
