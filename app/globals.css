@@ -28,6 +28,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 /* Star/dot background */
@@ -65,8 +66,7 @@ body::after {
   z-index: 0;
 }
 
-/* Ensure content is above pseudo elements */
-main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
+main, div, section, header, footer, a, button, input, span, h1, h2, h3, p, label {
   position: relative;
   z-index: 1;
 }
@@ -78,6 +78,7 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
+  padding: 20px;
 }
 
 .glass-glow {
@@ -86,6 +87,7 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0,212,255,0.2);
   border-radius: 16px;
+  padding: 20px;
   box-shadow: 0 0 40px rgba(0,212,255,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
@@ -102,7 +104,7 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 16px;
+  padding: 7px 18px;
   border-radius: 100px;
   font-size: 11px;
   font-weight: 700;
@@ -118,7 +120,7 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   display: block;
   width: 100%;
   text-align: center;
-  padding: 14px 24px;
+  padding: 15px 24px;
   border-radius: 12px;
   font-weight: 700;
   font-size: 14px;
@@ -139,7 +141,7 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   display: block;
   width: 100%;
   text-align: center;
-  padding: 13px 24px;
+  padding: 14px 24px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
@@ -155,10 +157,22 @@ main, div, section, header, footer, a, button, input, span, h1, h2, h3, p {
   background: rgba(0,212,255,0.08);
 }
 
+/* Section label */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
 /* Divider */
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  margin: 32px 0;
 }
 
 /* Scrollbar */
