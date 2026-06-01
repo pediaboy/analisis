@@ -1,199 +1,272 @@
 export default async function DashboardPage() {
   return (
-    <main className="min-h-screen bg-[#050B14] text-white max-w-md mx-auto">
-
-      <div className="p-5">
-
-        <h1 className="text-4xl font-bold text-cyan-400">
-          VIP Dashboard
-        </h1>
-
-        <p className="text-slate-400 mt-2">
-          Ritel Community Premium
-        </p>
-
+    <main
+      className="min-h-screen text-white max-w-md mx-auto"
+      style={{ background: "var(--bg-base)" }}
+    >
+      {/* HEADER */}
+      <div className="px-5 pt-10 pb-5" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: "var(--text-muted)" }}>
+              Premium
+            </p>
+            <h1
+              className="text-2xl font-bold"
+              style={{ color: "var(--neon-cyan)", textShadow: "0 0 24px rgba(0,212,255,0.35)" }}
+            >
+              VIP Dashboard
+            </h1>
+          </div>
+          <div
+            className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide"
+            style={{
+              background: "rgba(0,212,255,0.1)",
+              color: "var(--neon-cyan)",
+              border: "1px solid rgba(0,212,255,0.2)",
+            }}
+          >
+            MEMBER AKTIF
+          </div>
+        </div>
       </div>
 
-      <div className="px-5 pb-10 space-y-4">
+      <div className="px-5 py-5 space-y-4 pb-10">
 
         {/* BANDARMOLOGI */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-          <h2 className="font-bold text-cyan-400">
-            🏦 Bandarmologi IDX
-          </h2>
-
-          <div className="mt-4 space-y-2 text-sm">
-
-            <div className="flex justify-between">
-              <span>YP</span>
-              <span>Buy Rp 12.5 M</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>CC</span>
-              <span>Buy Rp 8.2 M</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>AK</span>
-              <span>Buy Rp 6.9 M</span>
-            </div>
-
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: "var(--neon-cyan)" }}>
+              🏦 Bandarmologi IDX
+            </p>
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>Hari ini</span>
+          </div>
+          <div className="space-y-2.5">
+            {[
+              { broker: "YP", action: "Buy", amount: "Rp 12.5 M", color: "#22c55e" },
+              { broker: "CC", action: "Buy", amount: "Rp 8.2 M", color: "#22c55e" },
+              { broker: "AK", action: "Buy", amount: "Rp 6.9 M", color: "#22c55e" },
+            ].map((b) => (
+              <div
+                key={b.broker}
+                className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg"
+                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-subtle)" }}
+              >
+                <span
+                  className="font-bold text-xs px-2 py-0.5 rounded"
+                  style={{ background: "rgba(0,212,255,0.1)", color: "var(--neon-cyan)" }}
+                >
+                  {b.broker}
+                </span>
+                <span className="font-medium text-white">{b.action}</span>
+                <span className="font-semibold text-xs" style={{ color: b.color }}>
+                  {b.amount}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* SMART MONEY */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <h2 className="font-bold text-cyan-400">
+        <div
+          className="rounded-2xl p-5"
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-active)",
+            boxShadow: "0 0 30px rgba(0,212,255,0.05)",
+          }}
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--neon-cyan)" }}>
             ⭐ Smart Money Score
-          </h2>
-
-          <div className="text-6xl font-bold mt-4">
-            87
+          </p>
+          <div className="flex items-end gap-4">
+            <div>
+              <span
+                className="text-6xl font-black leading-none"
+                style={{ color: "white", textShadow: "0 0 30px rgba(0,212,255,0.2)" }}
+              >
+                87
+              </span>
+              <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>/100</p>
+            </div>
+            <div className="pb-1">
+              <div
+                className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-widest"
+                style={{
+                  background: "rgba(34,197,94,0.1)",
+                  color: "#22c55e",
+                  border: "1px solid rgba(34,197,94,0.2)",
+                }}
+              >
+                STRONG BUY
+              </div>
+            </div>
           </div>
-
-          <div className="text-cyan-400">
-            STRONG BUY
+          <div className="mt-4 h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}>
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: "87%",
+                background: "linear-gradient(90deg, var(--neon-cyan), #22c55e)",
+                boxShadow: "0 0 8px rgba(34,197,94,0.5)",
+              }}
+            />
           </div>
-
         </div>
 
         {/* MULTIBAGGER */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <h2 className="font-bold text-cyan-400">
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--neon-cyan)" }}>
             🚀 Multibagger Scanner
-          </h2>
-
-          <div className="mt-4 space-y-2">
-
-            <div className="flex justify-between">
-              <span>BBCA</span>
-              <span>A+</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>TLKM</span>
-              <span>A</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>BBRI</span>
-              <span>A</span>
-            </div>
-
+          </p>
+          <div className="space-y-2.5">
+            {[
+              { kode: "BBCA", grade: "A+", score: 96 },
+              { kode: "TLKM", grade: "A", score: 88 },
+              { kode: "BBRI", grade: "A", score: 85 },
+            ].map((s) => (
+              <div
+                key={s.kode}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg"
+                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-subtle)" }}
+              >
+                <span className="font-bold text-white text-sm w-12">{s.kode}</span>
+                <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${s.score}%`,
+                      background: "linear-gradient(90deg, var(--neon-cyan), #2563eb)",
+                    }}
+                  />
+                </div>
+                <span
+                  className="text-xs font-bold w-6 text-right"
+                  style={{ color: "var(--neon-cyan)" }}
+                >
+                  {s.grade}
+                </span>
+              </div>
+            ))}
           </div>
-
         </div>
 
-        {/* NEWS */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <h2 className="font-bold text-cyan-400">
+        {/* NEWS SCANNER */}
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--neon-cyan)" }}>
             📰 News Scanner
-          </h2>
-
-          <div className="mt-4 space-y-3 text-sm">
-
-            <div>
-              TLKM Catat Pertumbuhan Laba Positif
-            </div>
-
-            <div>
-              BBCA Umumkan Kinerja Kuartal Terbaru
-            </div>
-
-            <div>
-              ANTM Fokus Ekspansi Hilirisasi
-            </div>
-
+          </p>
+          <div className="space-y-3">
+            {[
+              { title: "TLKM Catat Pertumbuhan Laba Positif", tag: "Bullish" },
+              { title: "BBCA Umumkan Kinerja Kuartal Terbaru", tag: "Neutral" },
+              { title: "ANTM Fokus Ekspansi Hilirisasi", tag: "Bullish" },
+            ].map((n) => (
+              <div
+                key={n.title}
+                className="flex items-start justify-between gap-3 pb-3"
+                style={{ borderBottom: "1px solid var(--border-subtle)" }}
+              >
+                <span className="text-sm text-white leading-snug">{n.title}</span>
+                <span
+                  className="text-xs font-semibold px-2 py-0.5 rounded flex-shrink-0 mt-0.5"
+                  style={{
+                    background: n.tag === "Bullish" ? "rgba(34,197,94,0.1)" : "rgba(100,116,139,0.1)",
+                    color: n.tag === "Bullish" ? "#22c55e" : "#64748b",
+                  }}
+                >
+                  {n.tag}
+                </span>
+              </div>
+            ))}
           </div>
-
         </div>
 
         {/* EARNINGS */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <h2 className="font-bold text-cyan-400">
+        <div
+          className="rounded-2xl p-5"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--neon-cyan)" }}>
             💰 Earnings Analysis
-          </h2>
-
-          <div className="mt-4 text-sm">
-
-            <div className="flex justify-between">
-              <span>TLKM</span>
-              <span className="text-green-400">
-                +12%
-              </span>
-            </div>
-
-            <div className="flex justify-between mt-2">
-              <span>BBCA</span>
-              <span className="text-green-400">
-                +9%
-              </span>
-            </div>
-
+          </p>
+          <div className="space-y-2.5">
+            {[
+              { kode: "TLKM", pct: "+12%", bar: 72 },
+              { kode: "BBCA", pct: "+9%", bar: 58 },
+              { kode: "BMRI", pct: "+7%", bar: 45 },
+            ].map((e) => (
+              <div key={e.kode} className="flex items-center gap-3 text-sm">
+                <span className="w-12 font-bold text-white">{e.kode}</span>
+                <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${e.bar}%`,
+                      background: "linear-gradient(90deg, #22c55e, #16a34a)",
+                    }}
+                  />
+                </div>
+                <span className="font-semibold text-xs w-10 text-right" style={{ color: "#22c55e" }}>
+                  {e.pct}
+                </span>
+              </div>
+            ))}
           </div>
-
         </div>
 
         {/* WATCHLIST */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <h2 className="font-bold text-cyan-400">
+        <div
+          className="rounded-2xl p-5"
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-active)",
+            boxShadow: "0 0 24px rgba(0,212,255,0.04)",
+          }}
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "var(--neon-cyan)" }}>
             📈 Watchlist Premium
-          </h2>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-
-            <span className="px-3 py-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              BBCA
-            </span>
-
-            <span className="px-3 py-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              TLKM
-            </span>
-
-            <span className="px-3 py-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              BBRI
-            </span>
-
-            <span className="px-3 py-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-              BMRI
-            </span>
-
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["BBCA", "TLKM", "BBRI", "BMRI", "ANTM", "GOTO"].map((s) => (
+              <span
+                key={s}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide"
+                style={{
+                  background: "rgba(0,212,255,0.07)",
+                  color: "var(--neon-cyan)",
+                  border: "1px solid rgba(0,212,255,0.15)",
+                }}
+              >
+                {s}
+              </span>
+            ))}
           </div>
-
         </div>
 
         {/* FOOTER */}
-
-        <div className="bg-[#0B1324] rounded-3xl p-5">
-
-          <div className="text-cyan-400 font-bold">
-            Creator & Developer
+        <div
+          className="rounded-xl px-5 py-4 flex items-center justify-between"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-subtle)" }}
+        >
+          <div>
+            <div className="text-xs font-semibold tracking-wide" style={{ color: "var(--neon-cyan)" }}>
+              Creator & Developer
+            </div>
+            <div className="text-sm font-medium text-white mt-1">THIRAFI THARIQ AL IDRIS</div>
+            <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>@elthoriqqqq_</div>
           </div>
-
-          <div className="mt-3">
-            THIRAFI THARIQ AL IDRIS
-          </div>
-
-          <div className="text-slate-400 text-sm mt-1">
-            Instagram: @elthoriqqqq_
-          </div>
-
         </div>
-
       </div>
-
     </main>
   );
 }
