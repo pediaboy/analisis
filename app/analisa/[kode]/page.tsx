@@ -22,81 +22,67 @@ export default async function AnalisaPage({
     rating = "RISKY"; ratingBg = "rgba(239,68,68,0.12)"; ratingColor = "#ef4444";
   }
 
+  const scorePercent = ((score - 60) / 40) * 100;
+
   return (
-    <main className="min-h-screen text-white max-w-md mx-auto px-5 pt-12 pb-12">
+    <main className="min-h-screen text-white max-w-md mx-auto" style={{ padding: "48px 20px 64px" }}>
 
       {/* NAV */}
-      <div className="flex items-center justify-between mb-12">
-        <a
-          href="/"
-          className="flex items-center gap-2 text-xs font-semibold"
-          style={{ color: "var(--muted-2)" }}
-        >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "48px" }}>
+        <a href="/" style={{ fontSize: "13px", fontWeight: 600, color: "var(--muted-2)", textDecoration: "none" }}>
           ← Kembali
         </a>
         <span className="pill">PREVIEW</span>
       </div>
 
       {/* HERO */}
-      <div className="mb-8">
-        <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "var(--muted)" }}>
-          Analisa Saham IDX
-        </p>
-        <h1
-          className="text-6xl font-black tracking-tight"
-          style={{
-            background: "linear-gradient(135deg, #ffffff 0%, var(--cyan) 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
+      <div style={{ marginBottom: "32px" }}>
+        <span className="section-label">Analisa Saham IDX</span>
+        <h1 style={{
+          fontSize: "64px", fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1,
+          background: "linear-gradient(135deg, #ffffff 0%, var(--cyan) 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+          marginTop: "8px"
+        }}>
           {kode.toUpperCase()}
         </h1>
       </div>
 
       {/* SCORE CARD */}
-      <div className="glass-glow p-6 mb-4">
-        <div className="flex items-start justify-between mb-6">
+      <div className="glass-glow" style={{ marginBottom: "16px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "24px" }}>
           <div>
-            <p className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: "var(--muted)" }}>
-              Fundamental Score
-            </p>
-            <div className="flex items-end gap-2">
-              <span className="text-7xl font-black leading-none text-white">{score}</span>
-              <span className="text-lg font-medium mb-2" style={{ color: "var(--muted)" }}>/100</span>
+            <span className="section-label">Fundamental Score</span>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: "8px", marginTop: "8px" }}>
+              <span style={{ fontSize: "72px", fontWeight: 900, lineHeight: 1, color: "white" }}>{score}</span>
+              <span style={{ fontSize: "18px", fontWeight: 500, marginBottom: "8px", color: "var(--muted)" }}>/100</span>
             </div>
           </div>
-          <div
-            className="px-4 py-2 rounded-xl text-sm font-bold tracking-wider"
-            style={{ background: ratingBg, color: ratingColor, border: `1px solid ${ratingColor}33` }}
-          >
+          <div style={{
+            padding: "10px 16px", borderRadius: "10px", fontSize: "13px", fontWeight: 700,
+            letterSpacing: "0.06em", background: ratingBg, color: ratingColor,
+            border: `1px solid ${ratingColor}44`, marginTop: "4px"
+          }}>
             {rating}
           </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="h-1.5 rounded-full mb-1" style={{ background: "rgba(255,255,255,0.06)" }}>
-          <div
-            className="h-full rounded-full transition-all duration-1000"
-            style={{
-              width: `${((score - 60) / 40) * 100}%`,
-              background: `linear-gradient(90deg, var(--cyan), ${ratingColor})`,
-              boxShadow: `0 0 10px ${ratingColor}66`,
-            }}
-          />
+        <div style={{ height: "6px", borderRadius: "4px", background: "rgba(255,255,255,0.06)", marginBottom: "8px" }}>
+          <div style={{
+            width: `${scorePercent}%`, height: "100%", borderRadius: "4px",
+            background: `linear-gradient(90deg, var(--cyan), ${ratingColor})`,
+            boxShadow: `0 0 10px ${ratingColor}66`
+          }} />
         </div>
-        <div className="flex justify-between text-xs" style={{ color: "var(--muted)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--muted)" }}>
           <span>Risky</span><span>Strong Buy</span>
         </div>
       </div>
 
       {/* LOCKED FEATURES */}
-      <div className="glass p-5 mb-4">
-        <p className="text-xs font-bold tracking-widest uppercase mb-4" style={{ color: "var(--muted)" }}>
-          Analisa Lengkap
-        </p>
-        <div className="space-y-2.5">
+      <div className="glass" style={{ marginBottom: "16px" }}>
+        <span className="section-label">Analisa Lengkap (VIP)</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
           {[
             { icon: "🏦", label: "Bandarmologi IDX" },
             { icon: "⭐", label: "Smart Money Score" },
@@ -104,53 +90,43 @@ export default async function AnalisaPage({
             { icon: "📰", label: "News Scanner" },
             { icon: "📈", label: "Watchlist Premium" },
           ].map((f) => (
-            <div
-              key={f.label}
-              className="flex items-center justify-between px-3 py-3 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
-            >
-              <span className="text-sm text-white">
-                {f.icon} {f.label}
-              </span>
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded"
-                style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444" }}
-              >
-                🔒 VIP
-              </span>
+            <div key={f.label} style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "12px 14px", borderRadius: "10px",
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)"
+            }}>
+              <span style={{ fontSize: "14px", color: "white" }}>{f.icon} {f.label}</span>
+              <span style={{
+                fontSize: "11px", fontWeight: 700, padding: "3px 8px", borderRadius: "6px",
+                background: "rgba(239,68,68,0.1)", color: "#ef4444"
+              }}>🔒 VIP</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* CTA */}
-      <div
-        className="rounded-2xl p-5 mb-8"
-        style={{
-          background: "linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(168,85,247,0.08) 100%)",
-          border: "1px solid rgba(0,212,255,0.2)",
-        }}
-      >
-        <p className="font-bold text-white mb-1">Unlock Analisa Penuh 💎</p>
-        <p className="text-xs mb-4" style={{ color: "var(--muted-2)" }}>
+      <div style={{
+        borderRadius: "16px", padding: "24px",
+        background: "linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(168,85,247,0.08) 100%)",
+        border: "1px solid rgba(0,212,255,0.2)", marginBottom: "40px"
+      }}>
+        <p style={{ fontWeight: 700, fontSize: "16px", color: "white", marginBottom: "8px" }}>
+          Unlock Analisa Penuh 💎
+        </p>
+        <p style={{ fontSize: "13px", lineHeight: 1.7, color: "var(--muted-2)", marginBottom: "20px" }}>
           Akses Bandarmologi, Smart Money, Multibagger & fitur premium lainnya.
         </p>
-        <a href="/vip" className="btn-primary mb-2">
-          Login VIP →
-        </a>
-        <a href="/paket" className="btn-outline">
-          Lihat Paket
-        </a>
+        <a href="/vip" className="btn-primary" style={{ marginBottom: "10px" }}>Login VIP →</a>
+        <a href="/paket" className="btn-outline">Lihat Paket</a>
       </div>
 
       {/* FOOTER */}
-      <div className="divider mb-6" />
-      <div className="text-center">
-        <p className="text-xs font-bold tracking-widest uppercase mb-1" style={{ color: "var(--muted)" }}>
-          Creator & Developer
-        </p>
-        <p className="font-bold text-white">THIRAFI THARIQ AL IDRIS</p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>@elthoriqqqq_</p>
+      <div className="divider" />
+      <div style={{ textAlign: "center" }}>
+        <span className="section-label" style={{ display: "block", marginBottom: "8px" }}>Creator & Developer</span>
+        <p style={{ fontWeight: 700, fontSize: "15px", color: "white", marginBottom: "6px" }}>THIRAFI THARIQ AL IDRIS</p>
+        <p style={{ fontSize: "13px", color: "var(--muted)" }}>@elthoriqqqq_</p>
       </div>
 
     </main>
