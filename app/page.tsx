@@ -13,170 +13,144 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen text-white max-w-md mx-auto px-5 pt-12 pb-12">
+    <main className="min-h-screen text-white max-w-md mx-auto" style={{ padding: "48px 20px 64px" }}>
 
       {/* HEADER NAV */}
-      <div className="flex items-center justify-between mb-14">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "56px" }}>
         <div>
-          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "var(--cyan)" }}>
+          <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--cyan)" }}>
             RITEL COMMUNITY
           </span>
-          <div className="w-6 h-0.5 mt-1 rounded-full" style={{ background: "linear-gradient(90deg, var(--cyan), var(--purple))" }} />
+          <div style={{ width: "24px", height: "2px", marginTop: "6px", borderRadius: "2px", background: "linear-gradient(90deg, var(--cyan), var(--purple))" }} />
         </div>
         <a
           href="/vip"
-          className="text-xs font-semibold px-3 py-1.5 rounded-full"
-          style={{ border: "1px solid rgba(255,255,255,0.1)", color: "var(--muted-2)" }}
+          style={{ fontSize: "12px", fontWeight: 600, padding: "8px 14px", borderRadius: "100px", border: "1px solid rgba(255,255,255,0.1)", color: "var(--muted-2)", textDecoration: "none" }}
         >
           Login VIP →
         </a>
       </div>
 
       {/* HERO */}
-      <div className="text-center mb-10">
-        <div className="pill mx-auto w-fit mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+      <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <div className="pill" style={{ display: "inline-flex", marginBottom: "24px" }}>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "currentColor", animation: "pulse 2s infinite" }} />
           IDX FUNDAMENTAL SCANNER
         </div>
 
-        <h1 className="text-5xl font-black leading-tight tracking-tight mb-4">
+        <h1 style={{ fontSize: "48px", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: "20px" }}>
           Analisa
           <br />
           <span className="gradient-text">Saham Indonesia</span>
         </h1>
 
-        <p className="text-sm leading-relaxed" style={{ color: "var(--muted-2)" }}>
-          Cek fundamental saham IDX — Bandarmologi,
-          <br />
+        <p style={{ fontSize: "14px", lineHeight: 1.8, color: "var(--muted-2)" }}>
+          Cek fundamental saham IDX — Bandarmologi,<br />
           Smart Money & Multibagger dalam hitungan detik.
         </p>
       </div>
 
-      {/* SEARCH */}
-      <div className="glass-glow p-5 mb-4">
-        <div
-          className="flex items-center gap-3 rounded-xl px-4 py-3.5 mb-3"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
-        >
-          <span style={{ color: "var(--muted)" }}>🔍</span>
+      {/* SEARCH CARD */}
+      <div className="glass-glow" style={{ marginBottom: "16px" }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: "12px",
+          background: "rgba(255,255,255,0.04)", borderRadius: "12px",
+          padding: "14px 16px", marginBottom: "12px",
+          border: "1px solid rgba(255,255,255,0.06)"
+        }}>
+          <span style={{ color: "var(--muted)", fontSize: "16px" }}>🔍</span>
           <input
             value={kode}
             onChange={(e) => setKode(e.target.value.toUpperCase())}
             onKeyDown={(e) => e.key === "Enter" && handleAnalisa()}
             placeholder="Ketik kode saham, mis. BBCA"
             maxLength={6}
-            className="flex-1 bg-transparent outline-none text-sm font-medium placeholder:opacity-30"
-            style={{ color: "white" }}
+            style={{
+              flex: 1, background: "transparent", border: "none", outline: "none",
+              fontSize: "14px", fontWeight: 500, color: "white",
+            }}
           />
           {kode && (
-            <span className="text-xs font-bold" style={{ color: "var(--cyan)" }}>
-              {kode}
-            </span>
+            <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--cyan)" }}>{kode}</span>
           )}
         </div>
-
-        <button
-          onClick={handleAnalisa}
-          className="btn-primary"
-        >
+        <button onClick={handleAnalisa} className="btn-primary">
           Cek Saham Sekarang →
         </button>
       </div>
 
       {/* STATS ROW */}
-      <div className="grid grid-cols-3 gap-2 mb-8">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "40px" }}>
         {[
           { val: "500+", label: "Emiten IDX" },
           { val: "Real‑time", label: "Data Update" },
           { val: "Gratis", label: "Preview" },
         ].map((s) => (
-          <div
-            key={s.label}
-            className="text-center py-3 px-2 rounded-xl"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
-          >
-            <div className="text-sm font-bold" style={{ color: "var(--cyan)" }}>{s.val}</div>
-            <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{s.label}</div>
+          <div key={s.label} style={{
+            textAlign: "center", padding: "14px 8px", borderRadius: "12px",
+            background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)"
+          }}>
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--cyan)", marginBottom: "4px" }}>{s.val}</div>
+            <div style={{ fontSize: "11px", color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* DIVIDER */}
-      <div className="divider mb-6" />
+      <div className="divider" />
 
       {/* MENU */}
-      <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "var(--muted)" }}>
-        Fitur & Layanan
-      </p>
-      <div className="space-y-2.5 mb-8">
+      <span className="section-label">Fitur & Layanan</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "40px" }}>
         {[
-          {
-            href: "/panduan",
-            icon: "📚",
-            label: "Panduan Trading",
-            sub: "Dari dasar hingga analisa fundamental & teknikal",
-            badge: null,
-          },
-          {
-            href: "/paket",
-            icon: "💎",
-            label: "Paket VIP",
-            sub: "Bandarmologi, Multibagger, dan fitur premium",
-            badge: "HOT",
-          },
-          {
-            href: "/vip",
-            icon: "🔐",
-            label: "Login VIP",
-            sub: "Masuk ke dashboard member eksklusif",
-            badge: null,
-          },
+          { href: "/panduan", icon: "📚", label: "Panduan Trading", sub: "Dari dasar hingga analisa fundamental & teknikal", badge: null },
+          { href: "/paket", icon: "💎", label: "Paket VIP", sub: "Bandarmologi, Multibagger, dan fitur premium", badge: "HOT" },
+          { href: "/vip", icon: "🔐", label: "Login VIP", sub: "Masuk ke dashboard member eksklusif", badge: null },
         ].map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className="glass flex items-center gap-4 px-4 py-4 group"
-            style={{ transition: "border-color 0.2s" }}
+            className="glass"
+            style={{
+              display: "flex", alignItems: "center", gap: "16px",
+              textDecoration: "none", transition: "border-color 0.2s",
+              padding: "16px 20px",
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(0,212,255,0.2)")}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
           >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.05)" }}
-            >
+            <div style={{
+              width: "44px", height: "44px", borderRadius: "12px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "20px", flexShrink: 0, background: "rgba(255,255,255,0.05)"
+            }}>
               {item.icon}
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm text-white">{item.label}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                <span style={{ fontWeight: 600, fontSize: "14px", color: "white" }}>{item.label}</span>
                 {item.badge && (
-                  <span
-                    className="text-xs font-bold px-1.5 py-0.5 rounded"
-                    style={{ background: "rgba(168,85,247,0.2)", color: "var(--purple)", fontSize: "9px" }}
-                  >
-                    {item.badge}
-                  </span>
+                  <span style={{
+                    fontSize: "9px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px",
+                    background: "rgba(168,85,247,0.2)", color: "var(--purple)"
+                  }}>{item.badge}</span>
                 )}
               </div>
-              <div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>
-                {item.sub}
-              </div>
+              <div style={{ fontSize: "12px", color: "var(--muted)", lineHeight: 1.4 }}>{item.sub}</div>
             </div>
-            <span className="text-sm" style={{ color: "var(--muted)" }}>›</span>
+            <span style={{ fontSize: "18px", color: "var(--muted)" }}>›</span>
           </a>
         ))}
       </div>
 
       {/* DIVIDER */}
-      <div className="divider mb-6" />
+      <div className="divider" />
 
       {/* FOOTER */}
-      <div className="text-center">
-        <p className="text-xs font-bold tracking-widest uppercase mb-1" style={{ color: "var(--muted)" }}>
-          Creator & Developer
-        </p>
-        <p className="font-bold text-white">THIRAFI THARIQ AL IDRIS</p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Instagram: @elthoriqqqq_</p>
+      <div style={{ textAlign: "center" }}>
+        <span className="section-label" style={{ display: "block", marginBottom: "8px" }}>Creator & Developer</span>
+        <p style={{ fontWeight: 700, fontSize: "15px", color: "white", marginBottom: "6px" }}>THIRAFI THARIQ AL IDRIS</p>
+        <p style={{ fontSize: "13px", color: "var(--muted)" }}>Instagram: @elthoriqqqq_</p>
       </div>
 
     </main>
