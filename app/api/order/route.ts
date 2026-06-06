@@ -3,37 +3,222 @@ import { sb } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-function genInvoice() {
+// Generate token format: RC-XXXX-XXXX-XXXX (uppercase alphanum)
+function generateToken(pkg: string): string {
+  const prefix = pkg.toUpperCase().slice(0, 2);
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const seg = () => Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join("");
+  return `RC-${prefix}${seg()}-${seg()}-${seg()}`;
+}
+
+// Generate invoice ID
+function genInvoice(): string {
   return "INV-" + Math.floor(Math.random() * 90000000 + 10000000);
 }
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { nama, hp, paket, metode, harga, note } = body;
+// Package duration in months (for expired_at calculation)
+const PKG_DURATION: Record<string, number> = {
+  basic: 1, silver: 1, gold: 1, pro: 1, platinum: 1, elite: 1,
+};
 
-    if (!nama || !hp || !paket || !metode || !harga) {
-      return NextResponse.json({ success: false, error: "Data tidak lengkap" }, { status: 400 });
+async function addMutasi(order: any) {
+  try {
+    const d = new Date();
+    const key = `mutasi_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+    const rows = await sb("GET", `/settings?key=eq.${key}&limit=1`);
+    const existing = rows[0]?.value || [];
+    const newItem = {
+      id: `mut-${order.id}`,
+      date: new Date().toISOString().split("T")[0],
+      description: `[analisis.io] Order ${order.paket} - ${order.nama} (${order.metode||"-"})`,
+      amount: order.harga,
+      type: "income",
+      order_id: order.id,
+      source: "analisis",
+      created_at: new Date().toISOString(),
+    };
+    const filtered = existing.filter((m: any) => m.order_id !== order.id);
+    filtered.unshift(newItem);
+    await sb("POST", "/settings",
+      { key, value: filtered, updated_at: new Date().toISOString() },
+      { Prefer: "resolution=merge-duplicates,return=representation" }
+    );
+  } catch {}
+}
+
+async function removeMutasi(orderId: string) {
+  try {
+    const d = new Date();
+    const key = `mutasi_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+    const rows = await sb("GET", `/settings?key=eq.${key}&limit=1`);
+    const existing = rows[0]?.value || [];
+    const filtered = existing.filter((m: any) => m.order_id !== orderId);
+    await sb("POST", "/settings",
+      { key, value: filtered, updated_at: new Date().toISOString() },
+      { Prefer: "resolution=merge-duplicates,return=representation" }
+    );
+  } catch {}
+}
+
+async function getOrders(): Promise<any[]> {
+  const rows = await sb("GET", "/settings?key=eq.orders_data&limit=1");
+  return rows[0]?.value || [];
+}
+
+async function saveOrders(orders: any[]) {
+  await sb("POST", "/settings",
+    { key: "orders_data", value: orders, updated_at: new Date().toISOString() },
+    { Prefer: "resolution=merge-duplicates,return=representation" }
+  );
+}
+
+// Simpan token ke Supabase /tokens tabel (sama dengan ritelcommunity.web.id)
+async function createToken(order: any): Promise<string> {
+  const token = generateToken(order.paket);
+  const now = new Date();
+  const months = PKG_DURATION[order.paket.toLowerCase()] || 1;
+  const expiredAt = new Date(now);
+  expiredAt.setMonth(expiredAt.getMonth() + months);
+
+  const tokenRow = {
+    id: `tok-${order.id}`,
+    email: order.email || "",
+    name: order.nama,
+    package: order.paket.toLowerCase(),
+    token,
+    expired_at: expiredAt.toISOString(),
+    is_active: true,
+    verified: false,
+    hp: order.hp,
+    source: "analisis",
+    order_id: order.id,
+    created_at: now.toISOString(),
+  };
+
+  await sb("POST", "/tokens", [tokenRow]);
+  return token;
+}
+
+// GET — ambil orders
+export async function GET() {
+  const orders = await getOrders();
+  return NextResponse.json({ orders });
+}
+
+// POST — create / update / delete order
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { action } = body;
+
+  // ── CREATE ORDER ──────────────────────────────────────────────
+  if (action === "create") {
+    const { nama, hp, paket, harga, metode, email, note } = body;
+    if (!nama || !hp || !paket || !harga) {
+      return NextResponse.json({ success: false, message: "Data tidak lengkap" }, { status: 400 });
     }
 
     const id = genInvoice();
-    const created_at = new Date().toISOString();
+    const newOrder = {
+      id,
+      nama,
+      hp,
+      email: email || "",
+      paket,
+      harga: Number(harga),
+      metode: metode || "-",
+      status: "pending",
+      note: note || "",
+      source: "analisis",
+      created_at: new Date().toISOString(),
+      paid_at: null,
+      token_generated: null,
+    };
 
-    const order = { id, nama, hp, paket, metode, harga, note: note || "", status: "pending", created_at };
+    const orders = await getOrders();
+    orders.unshift(newOrder);
+    await saveOrders(orders);
 
-    // Load existing orders_data from settings
-    const rows = await sb("GET", "/settings?key=eq.orders_data&limit=1");
-    let orders: any[] = rows[0]?.value || [];
-    orders = [order, ...orders];
+    // Kirim notif Telegram ke admin
+    try {
+      const chatRows = await sb("GET", "/settings?key=eq.telegram_admin_chat_id&limit=1");
+      const chatId = chatRows[0]?.value;
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      if (chatId && botToken) {
+        const wib = new Date().toLocaleString("id-ID", { timeZone:"Asia/Jakarta", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" } as any);
+        const msg = `🛒 <b>ORDER BARU — analisis.io</b>\n\n👤 <b>${nama}</b>\n📦 Paket: <b>${paket}</b>\n💰 Harga: Rp ${Number(harga).toLocaleString("id-ID")}\n💳 Metode: ${metode||"-"}\n📱 WA: ${hp}\n📋 Invoice: <code>${id}</code>\n⏰ ${wib}\n\n<i>Admin: konfirmasi via admin panel ritelcommunity.web.id/admin</i>`;
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: "HTML" }),
+        }).catch(()=>{});
+      }
+    } catch {}
 
-    // Upsert back
-    await sb("POST", "/settings",
-      { key: "orders_data", value: orders, updated_at: created_at },
-      { "Prefer": "resolution=merge-duplicates,return=representation" }
-    );
-
-    return NextResponse.json({ success: true, id });
-  } catch (e: any) {
-    return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    return NextResponse.json({ success: true, id, order: newOrder });
   }
+
+  // ── UPDATE STATUS (dipanggil dari admin ritelcommunity atau auto) ──
+  if (action === "update_status") {
+    const { id, status, note, metode } = body;
+    const orders = await getOrders();
+    const idx = orders.findIndex((o: any) => o.id === id);
+    if (idx === -1) return NextResponse.json({ success: false, message: "Order tidak ditemukan" });
+
+    const prev = orders[idx].status;
+    orders[idx].status = status || orders[idx].status;
+    if (note !== undefined) orders[idx].note = note;
+    if (metode !== undefined) orders[idx].metode = metode;
+
+    if (status === "paid" && prev !== "paid") {
+      orders[idx].paid_at = new Date().toISOString();
+      await addMutasi(orders[idx]);
+
+      // Auto-generate token saat PAID
+      if (!orders[idx].token_generated) {
+        try {
+          const token = await createToken(orders[idx]);
+          orders[idx].token_generated = token;
+
+          // Kirim token ke WA via Telegram notif
+          const chatRows = await sb("GET", "/settings?key=eq.telegram_admin_chat_id&limit=1");
+          const chatId = chatRows[0]?.value;
+          const botToken = process.env.TELEGRAM_BOT_TOKEN;
+          if (chatId && botToken) {
+            const msg = `✅ <b>PEMBAYARAN DIKONFIRMASI</b>\n\n👤 ${orders[idx].nama}\n📦 Paket: <b>${orders[idx].paket}</b>\n🎟 Token VIP: <code>${token}</code>\n📱 WA: ${orders[idx].hp}\n\n<i>Token sudah aktif — user bisa login di ritelcommunity.web.id/vip</i>`;
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: "HTML" }),
+            }).catch(()=>{});
+          }
+        } catch (e) {
+          console.error("Token generation failed:", e);
+        }
+      }
+    }
+
+    if (status === "cancelled" && prev === "paid") {
+      await removeMutasi(id);
+      // Deactivate token
+      if (orders[idx].token_generated) {
+        await sb("PATCH", `/tokens?token=eq.${encodeURIComponent(orders[idx].token_generated)}`,
+          { is_active: false }, { Prefer: "return=minimal" }
+        ).catch(()=>{});
+      }
+    }
+
+    await saveOrders(orders);
+    return NextResponse.json({ success: true, order: orders[idx] });
+  }
+
+  // ── DELETE ORDER ──────────────────────────────────────────────
+  if (action === "delete") {
+    const { id } = body;
+    const orders = await getOrders();
+    const found = orders.find((o: any) => o.id === id);
+    const filtered = orders.filter((o: any) => o.id !== id);
+    await saveOrders(filtered);
+    if (found) await removeMutasi(id);
+    return NextResponse.json({ success: true });
+  }
+
+  return NextResponse.json({ success: false, message: "Action tidak dikenal" }, { status: 400 });
 }
